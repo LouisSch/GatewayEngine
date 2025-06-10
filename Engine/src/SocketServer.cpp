@@ -71,14 +71,12 @@ void SocketServer::handleClient(int client_socket) {
 
     while (true) {
         ssize_t bytesRead = recv(client_socket, chunk, sizeof(chunk) - 1, 0);
-        // unsigned int bytesRead = read(client_socket, buffer, sizeof(buffer));
 
         if (bytesRead <= 0) {
             safePrint("[SocketServer] Client disconnected");
             break;
         }
 
-        // if (bytesRead >= sizeof(chunk)) bytesRead = sizeof(chunk) - 1;
         chunk[bytesRead] = '\0';
         buffer += chunk;
 
@@ -120,41 +118,6 @@ void SocketServer::handleClient(int client_socket) {
                 send(client_socket, errorStr.c_str(), errorStr.size(), 0);
             }
         }
-
-        // try {
-        //     json j = json::parse(buffer);
-            
-        //     safePrint("[SocketServer] Order received: ", j.dump());
-
-        //     if (!j.contains("id") || !j.contains("symbol") || !j.contains("price") || !j.contains("quantity") || !j.contains("side")) {
-        //         throw std::runtime_error("Missing required order fields.");
-        //     }
-
-        //     Order order;
-        //     order.id = j["id"].get<std::string>();
-        //     order.symbol = j["symbol"].get<std::string>();
-        //     order.price = j["price"].get<double>();
-        //     order.quantity = j["quantity"].get<int>();
-        //     std::string sideStr = j["side"].get<std::string>();
-
-        //     if (sideStr == "BUY") order.side = Side::BUY;
-        //     else if (sideStr == "SELL") order.side = Side::SELL;
-        //     else throw std::invalid_argument("Invalid side: must be BUY or SELL.");
-
-        //     order.timestamp = std::chrono::steady_clock::now();
-
-        //     bookManager.addOrder(order);
-            
-        //     json response = { {"status", "Order received and processed."} };
-        //     std::string responseStr = response.dump() + "\n";
-        //     send(client_socket, responseStr.c_str(), responseStr.size(), 0);
-        // } catch (const std::exception& e) {
-        //     safePrint("[SocketServer] Invalid order format or parse error: ", e.what());
-
-        //     json errorResponse = { {"error", e.what()} };
-        //     std::string errorStr = errorResponse.dump() + "\n";
-        //     send(client_socket, errorStr.c_str(), errorStr.size(), 0);
-        // }
     }
 
     close(client_socket);
